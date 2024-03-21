@@ -38,7 +38,9 @@ REAL		{return lREAL;}
 ">="		{return lGE;}
 "<="		{return lLE;}
 
-// Identifiers, Integer numbers, Real numbers
+{ID}	{return lID;}
+{DIG}  {return lINUM;}
+{RNUM}	{return lRNUM;}
 
 \"{NQUO}*\"	{sscanf(yytext,"%s", qstr); return lQSTR;}
 "/*"		{ BEGIN(C_COMMENT); }
