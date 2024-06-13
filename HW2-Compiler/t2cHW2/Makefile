@@ -28,3 +28,9 @@ t2c.o:	t2c.c t2c.h t_parse.h t2c_tree.h
 clean:
 	rm parse t2c.o t2c_tree.o t_parse.o t_parse.c t_parse.h t_lex.c t_lex.o
 
+rmtest:
+	rm -f test.c test1.c test2.c test3.c
+
+test: t2c test.t
+	./t2c test.t
+	gcc -o test test.c

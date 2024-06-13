@@ -489,11 +489,15 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "t_lex.l"
 #line 2 "t_lex.l"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "t2c.h"
+#include "t2c_tree.h"
 #include "t_parse.h"
-#line 495 "t_lex.c"
+#line 499 "t_lex.c"
 
-#line 497 "t_lex.c"
+#line 501 "t_lex.c"
 
 #define INITIAL 0
 #define C_COMMENT 1
@@ -711,10 +715,10 @@ YY_DECL
 		}
 
 	{
-#line 13 "t_lex.l"
+#line 17 "t_lex.l"
 
 
-#line 718 "t_lex.c"
+#line 722 "t_lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -773,188 +777,196 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 15 "t_lex.l"
+#line 19 "t_lex.l"
 {return lWRITE;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 16 "t_lex.l"
+#line 20 "t_lex.l"
 {return lREAD;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 17 "t_lex.l"
+#line 21 "t_lex.l"
 {return lIF;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 18 "t_lex.l"
+#line 22 "t_lex.l"
 {return lELSE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 19 "t_lex.l"
+#line 23 "t_lex.l"
 {return lRETURN;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "t_lex.l"
+#line 24 "t_lex.l"
 {return lBEGIN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "t_lex.l"
+#line 25 "t_lex.l"
 {return lEND;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 22 "t_lex.l"
+#line 26 "t_lex.l"
 {return lMAIN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 23 "t_lex.l"
+#line 27 "t_lex.l"
 {return lINT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 24 "t_lex.l"
+#line 28 "t_lex.l"
 {return lREAL;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 25 "t_lex.l"
+#line 29 "t_lex.l"
 {return lSEMI;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 26 "t_lex.l"
+#line 30 "t_lex.l"
 {return lCOMMA;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 27 "t_lex.l"
+#line 31 "t_lex.l"
 {return lLP;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "t_lex.l"
+#line 32 "t_lex.l"
 {return lRP;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "t_lex.l"
+#line 33 "t_lex.l"
 {return lADD;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "t_lex.l"
+#line 34 "t_lex.l"
 {return lMINUS;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "t_lex.l"
+#line 35 "t_lex.l"
 {return lTIMES;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "t_lex.l"
+#line 36 "t_lex.l"
 {return lDIVIDE;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "t_lex.l"
+#line 37 "t_lex.l"
 {return lGT;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "t_lex.l"
+#line 38 "t_lex.l"
 {return lLT;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 35 "t_lex.l"
+#line 39 "t_lex.l"
 {return lASSIGN;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 36 "t_lex.l"
+#line 40 "t_lex.l"
 {return lEQU;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 37 "t_lex.l"
+#line 41 "t_lex.l"
 {return lNEQ;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 38 "t_lex.l"
+#line 42 "t_lex.l"
 {return lGE;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 39 "t_lex.l"
+#line 43 "t_lex.l"
 {return lLE;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 41 "t_lex.l"
-{return lID;}
+#line 44 "t_lex.l"
+{sscanf(yytext,"%s", name);
+		 yylval.sr = strdup( name );
+		 return lID;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 42 "t_lex.l"
-{return lINUM;}
+#line 47 "t_lex.l"
+{sscanf(yytext,"%d", &ival);
+		 yylval.iv = ival;
+		 return lINUM;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 43 "t_lex.l"
-{return lRNUM;}
+#line 50 "t_lex.l"
+{sscanf(yytext,"%f", &rval);
+		 yylval.rv = rval;
+		 return lRNUM;}
 	YY_BREAK
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 45 "t_lex.l"
-{sscanf(yytext,"%s", qstr); return lQSTR;}
+#line 53 "t_lex.l"
+{strcpy( qstr, yytext );
+		 yylval.sr = strdup( qstr );
+		 return lQSTR;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 46 "t_lex.l"
+#line 56 "t_lex.l"
 { BEGIN(C_COMMENT); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 47 "t_lex.l"
+#line 57 "t_lex.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 48 "t_lex.l"
+#line 58 "t_lex.l"
 { }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 49 "t_lex.l"
+#line 59 "t_lex.l"
 { }
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 50 "t_lex.l"
+#line 60 "t_lex.l"
 {}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 51 "t_lex.l"
+#line 61 "t_lex.l"
 {}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 53 "t_lex.l"
+#line 63 "t_lex.l"
 ECHO;
 	YY_BREAK
-#line 958 "t_lex.c"
+#line 970 "t_lex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 	yyterminate();
@@ -1960,7 +1972,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 53 "t_lex.l"
+#line 63 "t_lex.l"
 
 
 int yywrap() {return 1;}

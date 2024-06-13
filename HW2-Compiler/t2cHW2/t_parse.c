@@ -71,10 +71,12 @@
 
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include <string.h>
 	#include "t2c.h"
+	#include "t2c_tree.h"
 	#include "t_parse.h"
 
-#line 78 "t_parse.c"
+#line 80 "t_parse.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -146,18 +148,20 @@ enum yysymbol_kind_t
   YYSYMBOL_block = 41,                     /* block  */
   YYSYMBOL_stmts = 42,                     /* stmts  */
   YYSYMBOL_stmt = 43,                      /* stmt  */
-  YYSYMBOL_localvardecls = 44,             /* localvardecls  */
-  YYSYMBOL_assignstmt = 45,                /* assignstmt  */
-  YYSYMBOL_returnstmt = 46,                /* returnstmt  */
-  YYSYMBOL_ifstmt = 47,                    /* ifstmt  */
-  YYSYMBOL_writestmt = 48,                 /* writestmt  */
-  YYSYMBOL_readstmt = 49,                  /* readstmt  */
-  YYSYMBOL_Expressions = 50,               /* Expressions  */
-  YYSYMBOL_muls = 51,                      /* muls  */
-  YYSYMBOL_mul = 52,                       /* mul  */
-  YYSYMBOL_pimaryexprs = 53,               /* pimaryexprs  */
-  YYSYMBOL_pimaryexpr = 54,                /* pimaryexpr  */
-  YYSYMBOL_actualsParms = 55               /* actualsParms  */
+  YYSYMBOL_vardcl = 44,                    /* vardcl  */
+  YYSYMBOL_astm = 45,                      /* astm  */
+  YYSYMBOL_rstm = 46,                      /* rstm  */
+  YYSYMBOL_istm = 47,                      /* istm  */
+  YYSYMBOL_wstm = 48,                      /* wstm  */
+  YYSYMBOL_dstm = 49,                      /* dstm  */
+  YYSYMBOL_expr = 50,                      /* expr  */
+  YYSYMBOL_mexprs = 51,                    /* mexprs  */
+  YYSYMBOL_mexpr = 52,                     /* mexpr  */
+  YYSYMBOL_pexprs = 53,                    /* pexprs  */
+  YYSYMBOL_pexpr = 54,                     /* pexpr  */
+  YYSYMBOL_bexpr = 55,                     /* bexpr  */
+  YYSYMBOL_aparams = 56,                   /* aparams  */
+  YYSYMBOL_oparams = 57                    /* oparams  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -485,16 +489,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  7
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   92
+#define YYLAST   100
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  33
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  23
+#define YYNNTS  25
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  47
+#define YYNRULES  55
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  99
+#define YYNSTATES  114
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   287
@@ -544,13 +548,14 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    22,    22,    26,    29,    31,    35,    37,    41,    43,
-      47,    50,    53,    57,    60,    64,    67,    70,    74,    76,
-      78,    80,    82,    84,    86,    89,    91,    94,    97,   100,
-     102,   105,   107,   119,   122,   124,   127,   129,   132,   134,
-     137,   143,   145,   147,   149,   151,   157,   159
+       0,    63,    63,    67,    70,    73,    77,    82,    88,    98,
+     110,   114,   117,   124,   128,   131,   138,   141,   145,   147,
+     149,   151,   153,   155,   157,   161,   170,   182,   194,   200,
+     207,   215,   223,   233,   240,   245,   251,   254,   263,   270,
+     278,   281,   285,   289,   293,   297,   306,   313,   320,   327,
+     334,   341,   350,   358,   363,   371
 };
 #endif
 
@@ -572,9 +577,8 @@ static const char *const yytname[] =
   "lINT", "lREAL", "lSTRING", "lELSE", "lMAIN", "lSEMI", "lCOMMA", "lID",
   "lINUM", "lRNUM", "lQSTR", "$accept", "prog", "mthdcls", "type",
   "mthdcl", "formals", "formal", "oformal", "block", "stmts", "stmt",
-  "localvardecls", "assignstmt", "returnstmt", "ifstmt", "writestmt",
-  "readstmt", "Expressions", "muls", "mul", "pimaryexprs", "pimaryexpr",
-  "actualsParms", YY_NULLPTR
+  "vardcl", "astm", "rstm", "istm", "wstm", "dstm", "expr", "mexprs",
+  "mexpr", "pexprs", "pexpr", "bexpr", "aparams", "oparams", YY_NULLPTR
 };
 
 static const char *
@@ -584,7 +588,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-64)
+#define YYPACT_NINF (-81)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -598,16 +602,18 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      10,   -64,   -64,    13,   -64,   -14,    10,   -64,    -8,     9,
-     -64,    17,    10,    10,    21,    30,    24,    32,   -64,    34,
-      10,   -64,    34,     1,   -64,    24,   -64,    35,    36,    37,
-     -13,    48,    29,   -64,    50,     1,   -64,   -64,   -64,   -64,
-     -64,   -64,   -64,   -13,    31,   -13,   -13,    41,   -64,   -64,
-      38,    19,    20,   -13,    -5,   -64,   -64,   -64,    39,    40,
-      42,    43,   -13,   -64,   -13,   -13,   -64,   -13,   -13,   -64,
-      44,   -64,    45,    46,     1,   -64,    47,    49,    19,    19,
-      20,    20,   -64,    51,    52,    54,   -13,   -64,   -64,   -64,
-     -64,   -64,    53,    55,     1,   -64,   -64,   -64,   -64
+      -1,   -81,   -81,     7,   -81,   -15,    -1,   -81,   -16,     9,
+     -81,    30,    -1,    -1,    13,    10,    25,    36,   -81,    58,
+      -1,   -81,    58,     1,   -81,    25,   -81,    38,    47,    48,
+      -4,    63,    41,   -81,    62,     1,   -81,   -81,   -81,   -81,
+     -81,   -81,   -81,    -4,    43,    -4,    -4,    53,   -81,   -81,
+      49,     2,    22,    -4,    11,   -81,   -81,   -81,    46,    51,
+      50,    54,    56,    -4,   -81,    -4,    -4,   -81,    -4,    -4,
+     -81,    55,   -81,    52,    57,    -4,    -4,    -4,    -4,    -4,
+      -4,     1,   -81,    59,    60,     2,     2,    22,    22,   -81,
+      64,    65,   -81,   -81,   -81,   -81,   -81,   -81,    66,    -4,
+     -81,   -81,   -81,   -81,   -81,   -81,    61,    67,     1,    59,
+     -81,   -81,   -81,   -81
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -617,30 +623,32 @@ static const yytype_int8 yydefact[] =
 {
        3,     6,     7,     0,     2,     0,     5,     1,     0,     0,
        4,     0,    11,    11,     0,     0,    14,     0,    12,     0,
-       0,    10,     0,    17,     9,    14,     8,     0,     0,     0,
-       0,     0,     0,    18,     0,    17,    19,    20,    21,    24,
-      22,    23,    13,     0,     0,     0,     0,    43,    41,    42,
+       0,    10,     0,     0,     9,    14,     8,     0,     0,     0,
+       0,     0,     0,    18,     0,    17,    19,    20,    21,    22,
+      23,    24,    13,     0,     0,     0,     0,    43,    41,    42,
        0,    36,    40,     0,     0,    26,    15,    16,     0,     0,
-       0,     0,     0,    28,     0,     0,    33,     0,     0,    37,
-       0,    25,     0,     0,     0,    44,    46,     0,    36,    36,
-      40,    40,    27,     0,     0,    29,     0,    45,    34,    35,
-      38,    39,     0,     0,     0,    47,    31,    32,    30
+       0,     0,     0,    53,    28,     0,     0,    33,     0,     0,
+      37,     0,    25,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    44,    55,     0,    36,    36,    40,    40,    27,
+       0,     0,    46,    47,    48,    49,    50,    51,    29,     0,
+      52,    45,    34,    35,    38,    39,     0,     0,     0,    55,
+      31,    32,    30,    54
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -64,   -64,    56,    14,   -64,    61,    63,    59,     6,    57,
-     -63,   -64,    58,   -64,   -64,   -64,   -64,   -43,   -38,   -20,
-     -34,   -19,   -64
+     -81,   -81,    72,    39,   -81,    70,    73,    71,    -7,    45,
+     -80,   -81,    68,   -81,   -81,   -81,   -81,   -43,   -42,   -19,
+     -39,   -14,   -81,   -81,   -17
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
        0,     3,     4,    32,     6,    15,    16,    21,    33,    34,
-      35,    36,    37,    38,    39,    40,    41,    50,    66,    51,
-      69,    52,    77
+      35,    36,    37,    38,    39,    40,    41,    50,    67,    51,
+      70,    52,    61,    84,   100
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -648,30 +656,32 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      58,    53,    60,    61,    27,    28,    29,    46,    30,    23,
-      70,    85,     8,     7,     5,     9,    47,    48,    49,    76,
-       5,    11,    71,     1,     2,    24,    14,    14,    26,    12,
-      31,    98,     1,     2,    14,    64,    65,    13,    67,    68,
-      88,    89,    23,    95,    78,    79,    90,    91,    80,    81,
-      18,    19,    20,    22,    53,    43,    44,    45,    54,    56,
-      59,    62,    10,    74,    75,    63,     0,    72,    73,     0,
-      87,    82,    92,    93,    17,    86,     0,    83,    84,    94,
-      96,     0,    97,    25,    42,     0,     0,     0,     0,     0,
-      55,     0,    57
+      58,    98,    60,    62,    27,    28,    29,     7,    30,    23,
+      71,     8,    24,    11,     9,    26,    46,    53,    65,    66,
+      83,     1,     2,     1,     2,    47,    48,    49,   112,    12,
+      31,    19,    92,    93,    94,    95,    96,    97,    72,     5,
+      68,    69,    18,   102,   103,     5,    85,    86,   104,   105,
+      13,    14,    14,    20,    87,    88,   109,    22,    43,    14,
+      75,    76,    77,    78,    79,    80,    23,    44,    45,    53,
+      54,    56,    59,    63,    73,    81,    64,    82,    10,    74,
+      57,   101,    89,    17,    90,   106,   107,    99,   110,    91,
+       0,   108,   113,    25,   111,     0,    42,     0,     0,     0,
+      55
 };
 
 static const yytype_int8 yycheck[] =
 {
-      43,     6,    45,    46,     3,     4,     5,    20,     7,     8,
-      53,    74,    26,     0,     0,    29,    29,    30,    31,    62,
-       6,    29,    27,    22,    23,    19,    12,    13,    22,    20,
-      29,    94,    22,    23,    20,    16,    17,    20,    18,    19,
-      78,    79,     8,    86,    64,    65,    80,    81,    67,    68,
-      29,    21,    28,    21,     6,    20,    20,    20,    29,     9,
-      29,    20,     6,    21,    21,    27,    -1,    28,    28,    -1,
-      21,    27,    21,    21,    13,    28,    -1,    32,    32,    25,
-      27,    -1,    27,    20,    25,    -1,    -1,    -1,    -1,    -1,
-      32,    -1,    35
+      43,    81,    45,    46,     3,     4,     5,     0,     7,     8,
+      53,    26,    19,    29,    29,    22,    20,     6,    16,    17,
+      63,    22,    23,    22,    23,    29,    30,    31,   108,    20,
+      29,    21,    75,    76,    77,    78,    79,    80,    27,     0,
+      18,    19,    29,    85,    86,     6,    65,    66,    87,    88,
+      20,    12,    13,    28,    68,    69,    99,    21,    20,    20,
+      10,    11,    12,    13,    14,    15,     8,    20,    20,     6,
+      29,     9,    29,    20,    28,    21,    27,    21,     6,    28,
+      35,    21,    27,    13,    32,    21,    21,    28,    27,    32,
+      -1,    25,   109,    20,    27,    -1,    25,    -1,    -1,    -1,
+      32
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -684,10 +694,12 @@ static const yytype_int8 yystos[] =
        7,    29,    36,    41,    42,    43,    44,    45,    46,    47,
       48,    49,    40,    20,    20,    20,    20,    29,    30,    31,
       50,    52,    54,     6,    29,    45,     9,    42,    50,    29,
-      50,    50,    20,    27,    16,    17,    51,    18,    19,    53,
-      50,    27,    28,    28,    21,    21,    50,    55,    52,    52,
-      54,    54,    27,    32,    32,    43,    28,    21,    51,    51,
-      53,    53,    21,    21,    25,    50,    27,    27,    43
+      50,    55,    50,    20,    27,    16,    17,    51,    18,    19,
+      53,    50,    27,    28,    28,    10,    11,    12,    13,    14,
+      15,    21,    21,    50,    56,    52,    52,    54,    54,    27,
+      32,    32,    50,    50,    50,    50,    50,    50,    43,    28,
+      57,    21,    51,    51,    53,    53,    21,    21,    25,    50,
+      27,    27,    43,    57
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -697,17 +709,19 @@ static const yytype_int8 yyr1[] =
       38,    38,    39,    40,    40,    41,    42,    42,    43,    43,
       43,    43,    43,    43,    43,    44,    44,    45,    46,    47,
       47,    48,    49,    50,    51,    51,    51,    52,    53,    53,
-      53,    54,    54,    54,    54,    54,    55,    55
+      53,    54,    54,    54,    54,    54,    55,    55,    55,    55,
+      55,    55,    56,    56,    57,    57
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     0,     2,     1,     1,     1,     7,     6,
-       2,     0,     2,     3,     0,     3,     2,     0,     1,     1,
+       2,     0,     2,     3,     0,     3,     2,     1,     1,     1,
        1,     1,     1,     1,     1,     3,     2,     4,     3,     5,
        7,     7,     7,     2,     3,     3,     0,     2,     3,     3,
-       0,     1,     1,     1,     3,     4,     1,     3
+       0,     1,     1,     1,     3,     4,     3,     3,     3,     3,
+       3,     3,     2,     0,     3,     0
 };
 
 
@@ -1171,284 +1185,488 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: mthdcls  */
-#line 23 "t_parse.y"
-                { printf("Program -> MethodDecls\n");
-		  printf("Parsed OK!\n"); }
-#line 1178 "t_parse.c"
+#line 64 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm);
+		  program = (yyval.sm); }
+#line 1192 "t_parse.c"
     break;
 
   case 3: /* prog: %empty  */
-#line 26 "t_parse.y"
+#line 67 "t_parse.y"
                 { printf("****** Parsing failed!\n"); }
-#line 1184 "t_parse.c"
+#line 1198 "t_parse.c"
     break;
 
   case 4: /* mthdcls: mthdcl mthdcls  */
-#line 30 "t_parse.y"
-                { printf("MethodDecls -> MethodDecl MethodDecls\n"); }
-#line 1190 "t_parse.c"
+#line 71 "t_parse.y"
+                { (yyval.sm) = (yyvsp[-1].sm);
+		  (yyval.sm)->next = (yyvsp[0].sm); }
+#line 1205 "t_parse.c"
     break;
 
   case 5: /* mthdcls: mthdcl  */
-#line 32 "t_parse.y"
-                { printf("MethodDecls -> MethodDecl\n"); }
-#line 1196 "t_parse.c"
+#line 74 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1211 "t_parse.c"
     break;
 
   case 6: /* type: lINT  */
-#line 36 "t_parse.y"
-                { printf("Type -> INT\n"); }
-#line 1202 "t_parse.c"
-    break;
-
-  case 7: /* type: lREAL  */
-#line 38 "t_parse.y"
-                { printf("Type -> REAL\n"); }
-#line 1208 "t_parse.c"
-    break;
-
-  case 8: /* mthdcl: type lMAIN lID lLP formals lRP block  */
-#line 42 "t_parse.y"
-                { printf("MethodDecl -> Type MAIN ID LP Formals RP Block\n"); }
-#line 1214 "t_parse.c"
-    break;
-
-  case 9: /* mthdcl: type lID lLP formals lRP block  */
-#line 44 "t_parse.y"
-                { printf("MethodDecl -> Type ID LP Formals RP Block\n"); }
+#line 78 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eTYPE;
+		  printf("MyTiny parse: type ok!\n");
+		  (yyval.ex)->ival = tINT; }
 #line 1220 "t_parse.c"
     break;
 
-  case 10: /* formals: formal oformal  */
-#line 48 "t_parse.y"
-                { printf("Formals -> Formal OtherFormals\n"); }
-#line 1226 "t_parse.c"
+  case 7: /* type: lREAL  */
+#line 83 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eTYPE;
+		  (yyval.ex)->ival = tREAL; }
+#line 1228 "t_parse.c"
     break;
 
-  case 11: /* formals: %empty  */
-#line 50 "t_parse.y"
-                { printf("Formals -> \n"); }
-#line 1232 "t_parse.c"
+  case 8: /* mthdcl: type lMAIN lID lLP formals lRP block  */
+#line 89 "t_parse.y"
+                { (yyval.sm) = create_stm();
+		  (yyval.sm)->stm_id = sMAIN;
+		  (yyval.sm)->exp1 = create_exp();
+		  (yyval.sm)->exp1->exp_id = eID;
+		  strcpy( (yyval.sm)->exp1->name, (yyvsp[-4].sr) );
+		  (yyval.sm)->exp1->exp1 = (yyvsp[-6].ex);
+		  (yyval.sm)->exp2 = (yyvsp[-2].ex);
+		  (yyval.sm)->stm1 = (yyvsp[0].sm);
+		  symtab = create_symnode( (yyvsp[-4].sr), (yyvsp[-6].ex)->ival ); }
+#line 1242 "t_parse.c"
     break;
 
-  case 12: /* formal: type lID  */
-#line 54 "t_parse.y"
-                { printf("Formal -> Type ID\n"); }
-#line 1238 "t_parse.c"
-    break;
-
-  case 13: /* oformal: lCOMMA formal oformal  */
-#line 58 "t_parse.y"
-                { printf("OtherFormals -> COMMA Formal OtherFormals\n"); }
-#line 1244 "t_parse.c"
-    break;
-
-  case 14: /* oformal: %empty  */
-#line 60 "t_parse.y"
-                { printf("OtherFormals -> \n"); }
-#line 1250 "t_parse.c"
-    break;
-
-  case 15: /* block: lBEGIN stmts lEND  */
-#line 65 "t_parse.y"
-                { printf("Block -> BEGIN Stmts END\n"); }
+  case 9: /* mthdcl: type lID lLP formals lRP block  */
+#line 99 "t_parse.y"
+                { (yyval.sm) = create_stm();
+		  (yyval.sm)->stm_id = sMDCL;
+		  (yyval.sm)->exp1 = create_exp();
+		  (yyval.sm)->exp1->exp_id = eID;
+		  strcpy( (yyval.sm)->exp1->name, (yyvsp[-4].sr) );
+		  (yyval.sm)->exp1->exp1 = (yyvsp[-5].ex);
+		  (yyval.sm)->exp2 = (yyvsp[-2].ex);
+		  (yyval.sm)->stm1 = (yyvsp[0].sm);
+		  symtab = create_symnode( (yyvsp[-4].sr), (yyvsp[-5].ex)->ival ); }
 #line 1256 "t_parse.c"
     break;
 
-  case 16: /* stmts: stmt stmts  */
-#line 68 "t_parse.y"
-                {printf("Stmts -> Stmt Stmts\n");}
-#line 1262 "t_parse.c"
+  case 10: /* formals: formal oformal  */
+#line 111 "t_parse.y"
+                { (yyval.ex) = (yyvsp[-1].ex);
+		  (yyval.ex)->next = (yyvsp[0].ex); }
+#line 1263 "t_parse.c"
     break;
 
-  case 17: /* stmts: %empty  */
-#line 70 "t_parse.y"
-                {printf("Stmts -> \n");}
-#line 1268 "t_parse.c"
+  case 11: /* formals: %empty  */
+#line 114 "t_parse.y"
+                { (yyval.ex) = NULL; }
+#line 1269 "t_parse.c"
+    break;
+
+  case 12: /* formal: type lID  */
+#line 118 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eFORM;
+		  (yyval.ex)->exp1 = (yyvsp[-1].ex);
+		  strcpy( (yyval.ex)->name, (yyvsp[0].sr) ); }
+#line 1278 "t_parse.c"
+    break;
+
+  case 13: /* oformal: lCOMMA formal oformal  */
+#line 125 "t_parse.y"
+                { (yyval.ex) = (yyvsp[-1].ex);
+		  (yyval.ex)->next = (yyvsp[0].ex); }
+#line 1285 "t_parse.c"
+    break;
+
+  case 14: /* oformal: %empty  */
+#line 128 "t_parse.y"
+                { (yyval.ex) = NULL; }
+#line 1291 "t_parse.c"
+    break;
+
+  case 15: /* block: lBEGIN stmts lEND  */
+#line 132 "t_parse.y"
+                { (yyval.sm) = create_stm();
+		  (yyval.sm)->stm_id = sBLOCK;
+		  printf("MyTiny parse: block ok!\n");
+		  (yyval.sm)->stm1 = (yyvsp[-1].sm); }
+#line 1300 "t_parse.c"
+    break;
+
+  case 16: /* stmts: stmt stmts  */
+#line 139 "t_parse.y"
+                { (yyval.sm) = (yyvsp[-1].sm);
+		  (yyval.sm)->next = (yyvsp[0].sm); }
+#line 1307 "t_parse.c"
+    break;
+
+  case 17: /* stmts: stmt  */
+#line 142 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1313 "t_parse.c"
     break;
 
   case 18: /* stmt: block  */
-#line 75 "t_parse.y"
-                {printf("Stmts -> Block\n");}
-#line 1274 "t_parse.c"
+#line 146 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1319 "t_parse.c"
     break;
 
-  case 19: /* stmt: localvardecls  */
-#line 77 "t_parse.y"
-                {printf("Stmts -> LocalDecls\n");}
-#line 1280 "t_parse.c"
+  case 19: /* stmt: vardcl  */
+#line 148 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1325 "t_parse.c"
     break;
 
-  case 20: /* stmt: assignstmt  */
-#line 79 "t_parse.y"
-                {printf("Stmts -> AssignStmt\n");}
-#line 1286 "t_parse.c"
+  case 20: /* stmt: astm  */
+#line 150 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1331 "t_parse.c"
     break;
 
-  case 21: /* stmt: returnstmt  */
-#line 81 "t_parse.y"
-                {printf("Stmts -> ReturnStmt\n");}
-#line 1292 "t_parse.c"
+  case 21: /* stmt: rstm  */
+#line 152 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1337 "t_parse.c"
     break;
 
-  case 22: /* stmt: writestmt  */
-#line 83 "t_parse.y"
-                {printf("Stmts -> WriteStmt\n");}
-#line 1298 "t_parse.c"
+  case 22: /* stmt: istm  */
+#line 154 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1343 "t_parse.c"
     break;
 
-  case 23: /* stmt: readstmt  */
-#line 85 "t_parse.y"
-                {printf("Stmts -> ReadStmt\n");}
-#line 1304 "t_parse.c"
+  case 23: /* stmt: wstm  */
+#line 156 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1349 "t_parse.c"
     break;
 
-  case 24: /* stmt: ifstmt  */
-#line 87 "t_parse.y"
-                {printf("Stmts -> IfStmt\n");}
-#line 1310 "t_parse.c"
+  case 24: /* stmt: dstm  */
+#line 158 "t_parse.y"
+                { (yyval.sm) = (yyvsp[0].sm); }
+#line 1355 "t_parse.c"
     break;
 
-  case 25: /* localvardecls: type lID lSEMI  */
-#line 90 "t_parse.y"
-                {printf("LocalDecls -> Type ID SEMI\n");}
-#line 1316 "t_parse.c"
+  case 25: /* vardcl: type lID lSEMI  */
+#line 162 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.sm) = create_stm();
+		(yyval.sm)->stm_id = sVDCL2;
+		(yyval.sm)->exp1 = create_exp();
+		(yyval.sm)->exp1->exp_id = eID;
+		strcpy( (yyval.sm)->exp1->name, (yyvsp[-1].sr) );
+		(yyval.sm)->exp1->exp1 = (yyvsp[-2].ex);
+		}
+#line 1368 "t_parse.c"
     break;
 
-  case 26: /* localvardecls: type assignstmt  */
-#line 92 "t_parse.y"
-                {printf("LocalDecls -> Type ID SEMI LocalDecls\n");}
-#line 1322 "t_parse.c"
-    break;
-
-  case 27: /* assignstmt: lID lASSIGN Expressions lSEMI  */
-#line 95 "t_parse.y"
-                {printf("AssignStmt -> LValue ASSIGN Expr SEMI\n");}
-#line 1328 "t_parse.c"
-    break;
-
-  case 28: /* returnstmt: lRETURN Expressions lSEMI  */
-#line 98 "t_parse.y"
-                {printf("ReturnStmt -> RETURN Expr SEMI\n");}
-#line 1334 "t_parse.c"
-    break;
-
-  case 29: /* ifstmt: lIF lLP Expressions lRP stmt  */
-#line 101 "t_parse.y"
-                {printf("IfStmt -> IF LP Expr RP Stmts\n");}
-#line 1340 "t_parse.c"
-    break;
-
-  case 30: /* ifstmt: lIF lLP Expressions lRP stmt lELSE stmt  */
-#line 103 "t_parse.y"
-                {printf("IfStmt -> IF LP Expr RP Stmts ELSE Stmts\n");}
-#line 1346 "t_parse.c"
-    break;
-
-  case 31: /* writestmt: lWRITE lLP Expressions lCOMMA lQSTR lRP lSEMI  */
-#line 106 "t_parse.y"
-                {printf("WriteStmt -> WRITE LP Expr COM QSTR RP SEMI\n");}
-#line 1352 "t_parse.c"
-    break;
-
-  case 32: /* readstmt: lREAD lLP lID lCOMMA lQSTR lRP lSEMI  */
-#line 108 "t_parse.y"
-                {printf("ReadStmt -> READ LP ID COM QSTR RP SEMI\n");}
-#line 1358 "t_parse.c"
-    break;
-
-  case 33: /* Expressions: mul muls  */
-#line 120 "t_parse.y"
-                {printf("Expr -> MultExpr MultExprs\n");}
-#line 1364 "t_parse.c"
-    break;
-
-  case 34: /* muls: lADD mul muls  */
-#line 123 "t_parse.y"
-                {printf("MultExprs -> AddOp MultExpr MultExprs\n");}
-#line 1370 "t_parse.c"
-    break;
-
-  case 35: /* muls: lMINUS mul muls  */
-#line 125 "t_parse.y"
-                {printf("MultExprs -> SubOp MultExpr MultExprs\n");}
-#line 1376 "t_parse.c"
-    break;
-
-  case 36: /* muls: %empty  */
-#line 127 "t_parse.y"
-                {printf("MultExprs -> \n");}
+  case 26: /* vardcl: type astm  */
+#line 171 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.sm) = create_stm();
+		(yyval.sm)->stm_id = sVDCL2;
+		(yyval.sm)->exp1 = create_exp();
+		(yyval.sm)->exp1->exp_id = eID;
+		strcpy( (yyval.sm)->exp1->name, (yyvsp[0].sm)->exp1->name );
+		(yyval.sm)->exp1->exp1 = (yyvsp[-1].ex);
+		(yyval.sm)->exp2 = (yyvsp[0].sm)->exp2;
+		}
 #line 1382 "t_parse.c"
     break;
 
-  case 37: /* mul: pimaryexpr pimaryexprs  */
-#line 130 "t_parse.y"
-                {printf("MultExpr -> PrimExpr\n");}
-#line 1388 "t_parse.c"
+  case 27: /* astm: lID lASSIGN expr lSEMI  */
+#line 183 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.sm) = create_stm();
+		(yyval.sm)->stm_id = eASSIGN2;
+		(yyval.sm)->exp1 = create_exp();
+		(yyval.sm)->exp1->exp_id = eID;
+		strcpy( (yyval.sm)->exp1->name, (yyvsp[-3].sr) );
+		(yyval.sm)->exp1->exp1 = (yyvsp[-1].ex);
+		
+		}
+#line 1396 "t_parse.c"
     break;
 
-  case 38: /* pimaryexprs: lTIMES pimaryexpr pimaryexprs  */
-#line 133 "t_parse.y"
-                {printf("PrimExprs -> MultOp PrimExpr PrimExprs\n");}
-#line 1394 "t_parse.c"
+  case 28: /* rstm: lRETURN expr lSEMI  */
+#line 195 "t_parse.y"
+                { (yyval.sm) = create_stm();
+		  (yyval.sm)->stm_id = sRSTM;
+		  (yyval.sm)->exp1 = (yyvsp[-1].ex); }
+#line 1404 "t_parse.c"
     break;
 
-  case 39: /* pimaryexprs: lDIVIDE pimaryexpr pimaryexprs  */
-#line 135 "t_parse.y"
-                {printf("PrimExprs -> DivOp PrimExpr PrimExprs\n");}
-#line 1400 "t_parse.c"
+  case 29: /* istm: lIF lLP bexpr lRP stmt  */
+#line 201 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.sm) = create_stm();
+		(yyval.sm)->stm_id = sISTM;
+		(yyval.sm)->exp1 = (yyvsp[-2].ex);
+		(yyval.sm)->stm1 = (yyvsp[0].sm);
+		}
+#line 1415 "t_parse.c"
     break;
 
-  case 40: /* pimaryexprs: %empty  */
-#line 137 "t_parse.y"
-                {printf("PrimExprs -> \n");}
-#line 1406 "t_parse.c"
+  case 30: /* istm: lIF lLP bexpr lRP stmt lELSE stmt  */
+#line 208 "t_parse.y"
+                { (yyval.sm) = create_stm();
+		  (yyval.sm)->stm_id = sISTM;
+		  (yyval.sm)->exp1 = (yyvsp[-4].ex);
+		  (yyval.sm)->stm1 = (yyvsp[-2].sm);
+		  (yyval.sm)->stm2 = (yyvsp[0].sm); }
+#line 1425 "t_parse.c"
     break;
 
-  case 41: /* pimaryexpr: lINUM  */
-#line 144 "t_parse.y"
-                {printf("PrimExpr -> INUM\n");}
-#line 1412 "t_parse.c"
+  case 31: /* wstm: lWRITE lLP expr lCOMMA lQSTR lRP lSEMI  */
+#line 216 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.sm) = create_stm();
+		(yyval.sm)->stm_id = sWSTM;
+		(yyval.sm)->exp1 = (yyvsp[-4].ex);
+		}
+#line 1435 "t_parse.c"
     break;
 
-  case 42: /* pimaryexpr: lRNUM  */
-#line 146 "t_parse.y"
-                {printf("PrimExpr -> RNUM\n");}
-#line 1418 "t_parse.c"
+  case 32: /* dstm: lREAD lLP lID lCOMMA lQSTR lRP lSEMI  */
+#line 224 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.sm) = create_stm();
+		(yyval.sm)->stm_id = sDSTM;
+		(yyval.sm)->exp1 = create_exp();
+		(yyval.sm)->exp1->exp_id = eID;
+		strcpy( (yyval.sm)->exp1->name, (yyvsp[-4].sr) );
+		}
+#line 1447 "t_parse.c"
     break;
 
-  case 43: /* pimaryexpr: lID  */
-#line 148 "t_parse.y"
-                {printf("PrimExpr -> ID\n");}
-#line 1424 "t_parse.c"
+  case 33: /* expr: mexpr mexprs  */
+#line 234 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eEXPR;
+		  (yyval.ex)->exp1 = (yyvsp[-1].ex);
+		  (yyval.ex)->next = (yyvsp[0].ex); }
+#line 1456 "t_parse.c"
     break;
 
-  case 44: /* pimaryexpr: lLP Expressions lRP  */
-#line 150 "t_parse.y"
-                {printf("PrimExpr -> LP Expr RP\n");}
-#line 1430 "t_parse.c"
+  case 34: /* mexprs: lADD mexpr mexprs  */
+#line 241 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eADD;
+		  (yyval.ex)->exp1 = (yyvsp[-1].ex);
+		  (yyval.ex)->next = (yyvsp[0].ex); }
+#line 1465 "t_parse.c"
     break;
 
-  case 45: /* pimaryexpr: lID lLP actualsParms lRP  */
-#line 152 "t_parse.y"
-                {printf("PrimExpr -> ID LP Actuals RP\n");}
-#line 1436 "t_parse.c"
+  case 35: /* mexprs: lMINUS mexpr mexprs  */
+#line 246 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eMINUS;
+		  (yyval.ex)->exp1 = (yyvsp[-1].ex);
+		  (yyval.ex)->next = (yyvsp[0].ex); }
+#line 1474 "t_parse.c"
     break;
 
-  case 46: /* actualsParms: Expressions  */
-#line 158 "t_parse.y"
-                {printf("Actuals -> Exprs\n");}
-#line 1442 "t_parse.c"
+  case 36: /* mexprs: %empty  */
+#line 251 "t_parse.y"
+                { (yyval.ex) = NULL; }
+#line 1480 "t_parse.c"
     break;
 
-  case 47: /* actualsParms: Expressions lCOMMA Expressions  */
-#line 160 "t_parse.y"
-                {printf("Actuals -> Exprs COM Exprs\n");}
-#line 1448 "t_parse.c"
+  case 37: /* mexpr: pexpr pexprs  */
+#line 255 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eEXPR;
+		(yyval.ex)->exp1 = (yyvsp[-1].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1491 "t_parse.c"
+    break;
+
+  case 38: /* pexprs: lTIMES pexpr pexprs  */
+#line 264 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eTIMES;
+		(yyval.ex)->exp1 = (yyvsp[-1].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1502 "t_parse.c"
+    break;
+
+  case 39: /* pexprs: lDIVIDE pexpr pexprs  */
+#line 271 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eDIVIDE;
+		(yyval.ex)->exp1 = (yyvsp[-1].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1513 "t_parse.c"
+    break;
+
+  case 40: /* pexprs: %empty  */
+#line 278 "t_parse.y"
+                { (yyval.ex) = NULL; }
+#line 1519 "t_parse.c"
+    break;
+
+  case 41: /* pexpr: lINUM  */
+#line 282 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eINUM;
+		  (yyval.ex)->ival = (yyvsp[0].iv); }
+#line 1527 "t_parse.c"
+    break;
+
+  case 42: /* pexpr: lRNUM  */
+#line 286 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eRNUM;
+		  (yyval.ex)->rval = (yyvsp[0].rv); }
+#line 1535 "t_parse.c"
+    break;
+
+  case 43: /* pexpr: lID  */
+#line 290 "t_parse.y"
+                { (yyval.ex) = create_exp();
+		  (yyval.ex)->exp_id = eID;
+		  strcpy( (yyval.ex)->name, (yyvsp[0].sr) ); }
+#line 1543 "t_parse.c"
+    break;
+
+  case 44: /* pexpr: lLP expr lRP  */
+#line 294 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = (yyvsp[-1].ex);
+		}
+#line 1551 "t_parse.c"
+    break;
+
+  case 45: /* pexpr: lID lLP aparams lRP  */
+#line 298 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eFUNC;
+		strcpy( (yyval.ex)->name, (yyvsp[-3].sr) );
+		(yyval.ex)->exp1 = (yyvsp[-1].ex);
+		}
+#line 1562 "t_parse.c"
+    break;
+
+  case 46: /* bexpr: expr lEQU expr  */
+#line 307 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();	
+		(yyval.ex)->exp_id = eEQ;
+		(yyval.ex)->exp1 = (yyvsp[-2].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1573 "t_parse.c"
+    break;
+
+  case 47: /* bexpr: expr lNEQ expr  */
+#line 314 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eNE;
+		(yyval.ex)->exp1 = (yyvsp[-2].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1584 "t_parse.c"
+    break;
+
+  case 48: /* bexpr: expr lGT expr  */
+#line 321 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eGT;
+		(yyval.ex)->exp1 = (yyvsp[-2].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1595 "t_parse.c"
+    break;
+
+  case 49: /* bexpr: expr lLT expr  */
+#line 328 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eLT;
+		(yyval.ex)->exp1 = (yyvsp[-2].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1606 "t_parse.c"
+    break;
+
+  case 50: /* bexpr: expr lGE expr  */
+#line 335 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eGE;
+		(yyval.ex)->exp1 = (yyvsp[-2].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1617 "t_parse.c"
+    break;
+
+  case 51: /* bexpr: expr lLE expr  */
+#line 342 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eLE;
+		(yyval.ex)->exp1 = (yyvsp[-2].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1628 "t_parse.c"
+    break;
+
+  case 52: /* aparams: expr oparams  */
+#line 351 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eAPARM;
+		(yyval.ex)->exp1 = (yyvsp[-1].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1639 "t_parse.c"
+    break;
+
+  case 53: /* aparams: %empty  */
+#line 358 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = NULL;
+		}
+#line 1647 "t_parse.c"
+    break;
+
+  case 54: /* oparams: lCOMMA expr oparams  */
+#line 364 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = create_exp();
+		(yyval.ex)->exp_id = eAPARM;
+		(yyval.ex)->exp1 = (yyvsp[-1].ex);
+		(yyval.ex)->next = (yyvsp[0].ex);
+		}
+#line 1658 "t_parse.c"
+    break;
+
+  case 55: /* oparams: %empty  */
+#line 371 "t_parse.y"
+                { // Write your own semantic action here.
+		(yyval.ex) = NULL;
+		}
+#line 1666 "t_parse.c"
     break;
 
 
-#line 1452 "t_parse.c"
+#line 1670 "t_parse.c"
 
       default: break;
     }
@@ -1641,8 +1859,9 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 176 "t_parse.y"
- 
+#line 376 "t_parse.y"
+
+
 int yyerror(char *s)
 {
 	printf("%s\n",s);

@@ -255,10 +255,19 @@ void gen_exp ( tEXP* p ) {
 		print_exp( p->next );
 		break;
     case eMEXP: // Write your own gen_exp here.
+    fprintf(  yyout, " ^ " );
+    gen_exp( p->exp1 );
+    gen_exp( p->next );
 		break;
     case eTIMES: // Write your own gen_exp here.
+    fprintf( yyout, " * " );
+    gen_exp( p->exp1 );
+    gen_exp( p->next );
 		break;
     case eDIVIDE: // Write your own gen_exp here.
+    fprintf( yyout, " / " );
+    gen_exp( p->exp1 );
+    gen_exp( p->next );
 		break;
     case eINUM: fprintf( yyout, "%d", p->ival );
 		break;
@@ -267,22 +276,51 @@ void gen_exp ( tEXP* p ) {
     case eID:   fprintf( yyout, "%s", p->name );
 		break;
     case ePAREN:  // Write your own gen_exp here.
+    fprintf( yyout, "( " );
+    gen_exp( p->exp1 );
+    fprintf( yyout, " )" );
 		break;
     case eFUNC: // Write your own gen_exp here.
+    fprintf( yyout, "%s( ", p->name );
+    gen_exp( p->exp1 );
+    fprintf( yyout, " )" );
 		break;
     case eEQ:  // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    fprintf( yyout, " == " );
+    gen_exp( p->next );
 		break;
     case eNE:  // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    fprintf( yyout, " != " );
+    gen_exp( p->next );
 		break;
     case eGT:  // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    fprintf( yyout, " > " );
+    gen_exp( p->next );
 		break;
     case eLT:  // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    fprintf( yyout, " < " );
+    gen_exp( p->next );
 		break;
     case eGE:  // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    fprintf( yyout, " >= " );
+    gen_exp( p->next );
 		break;
     case eLE:  // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    fprintf( yyout, " <= " );
+    gen_exp( p->next );
 		break;
     case eAPARM: // Write your own gen_exp here.
+    gen_exp( p->exp1 );
+    if (p->next) {
+      fprintf( yyout, ", " );
+      gen_exp( p->next );
+    }
 		break;
     case eASSIGN1: fprintf( yyout, "%s = ", p->name );
 		gen_exp( p->exp1 );
@@ -291,8 +329,18 @@ void gen_exp ( tEXP* p ) {
     case eASSIGN2: fprintf( yyout, "%s = %s;\n", p->name, p->qstr );
 		break;
     case eWSTM: // Write your own gen_exp here.
+    fprintf(yyout, "printf (");
+    gen_exp(p->exp1);
+    fprintf(yyout, ", ");
+    gen_exp(p->next);
+    fprintf(yyout, ");\n");
 		break;
     case eDSTM: // Write your own gen_exp here.
+    fprintf(yyout, "scanf (");
+    gen_exp(p->exp1);
+    fprintf(yyout, ", ");
+    gen_exp(p->next);
+    fprintf(yyout, ");\n");
 		break;
     default: fprintf(stderr, "******* An error in expressions!\n");
 	     break;
@@ -335,12 +383,26 @@ void gen_code ( tSTM* p ) {
     case sASTM: gen_exp( p->exp1 );
 		break;
     case sRSTM: // Write your own gen_code here.
+    fprintf( yyout, "return " );
+    gen_exp( p->exp1 );
+    fprintf( yyout, ";\n" );
 		break;
     case sISTM: // Write your own gen_code here.
+    fprintf( yyout, " if ( " );
+    gen_exp( p->exp1 );
+    fprintf( yyout, " )\n" );
+    gen_code( p->stm1 );
 		break;
     case sWSTM: // Write your own gen_code here.
+    fprintf( yyout, "printf ( " );
+    gen_exp( p->exp1 );
+    fprintf( yyout, " );\n" );
 		break;
     case sDSTM: // Write your own gen_code here.
+    fprintf( yyout, "scanf ( " );
+    gen_exp( p->exp1 );
+    fprintf( yyout, " );\n" );
+    
 		break;
     default:    fprintf(stderr, "******* An error in statements!\n");
 		break;
