@@ -36,8 +36,11 @@ fun parent p1 p2 =
     let 
         val parents = List.filter (fn p => #child p = p2) (!people)
     in
-        List.exists (fn p => #name p = p1 andalso (#child p = p2)) (!people) orelse
-        married (#name (List.hd parents)) p1
+        if null parents then
+            false
+        else
+            List.exists (fn p => #name p = p1 andalso (#child p = p2)) (!people) orelse
+            married (#name (List.hd parents)) p1
     end
 
 fun siblings p1 p2 = 
@@ -60,12 +63,26 @@ fun sister p1 p2 =
     List.exists (fn p => #name p = p1 andalso #gender p = "F") (!people) andalso
     List.exists (fn p => #name p = p2 andalso #gender p = "F") (!people)
 
+fun find_p1_parent_spouse p1 = 
+    let
+        val parents_of_p1 = List.filter (fn p => #child p = p1) (!people)
+    in
+        if List.null parents_of_p1 then
+            [] (* or handle it as per your requirement *)
+        else
+            List.filter (fn p => #name p = #spouse (List.hd parents_of_p1)) (!people)
+    end
+
 fun cousin p1 p2 = 
     let
         val parents_of_p1 = List.filter (fn p => #child p = p1) (!people)
         val parents_of_p2 = List.filter (fn p => #child p = p2) (!people)
+        val parents_of_p1_spouse = find_p1_parent_spouse p1
+        val parents_of_p2_spouse = find_p1_parent_spouse p2
     in
-        List.exists (fn p1 => List.exists (fn p2 => siblings (#name p1) (#name p2)) parents_of_p2) parents_of_p1
+        List.exists (fn p1 => List.exists (fn p2 => siblings (#name p1) (#name p2)) parents_of_p2) parents_of_p1 orelse
+        List.exists (fn p1 => List.exists (fn p2 => siblings (#name p1) (#name p2)) parents_of_p2) parents_of_p1_spouse orelse
+        List.exists (fn p1 => List.exists (fn p2 => siblings (#name p1) (#name p2)) parents_of_p1) parents_of_p2_spouse
     end
 
 (* Query the relationship *)
@@ -85,3 +102,5 @@ val _ = print (Bool.toString (query_relationship("Helen", "Nancy", "Sister")) ^ 
 val _ = print (Bool.toString (query_relationship("Edward", "Quinn", "Brother")) ^ "\n")
 val _ = print (Bool.toString (query_relationship("Felix", "Rebecca", "Cousin")) ^ "\n")
 val _ = print (Bool.toString (query_relationship("Cecil", "Iris", "Siblings")) ^ "\n")
+val _ = print (Bool.toString (query_relationship("Nancy", "Martin", "Parent")) ^ "\n")
+val _ = print (Bool.toString (query_relationship("Cecil", "Oscar", "Cousin")) ^ "\n")

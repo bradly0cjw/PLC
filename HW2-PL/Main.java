@@ -25,8 +25,9 @@ public class Main {
             if (i.name.equals(p1)) {
                 for (Person j : people) {
                     if (j.name.equals(p2)) {
-                        if (i.parent == j || j.parent == i || (i.parent == j.spouse|| j.parent == i.spouse)) {
+                        if (j.parent == i || (j.parent == i.spouse && i.spouse != null)) {
                             if(r.equals("parent")) {
+                                // System.out.println("flag");
                                 return "true";
                             }
                         }
@@ -51,7 +52,7 @@ public class Main {
                                 return "true";
                             }
                         }
-                        if (i.parent != null && j.parent != null && i.parent.sibling == j.parent) {
+                        if ((i.parent != null && j.parent != null && (i.parent.sibling == j.parent || j.parent.sibling == i.parent))|| ((i.parent.spouse.sibling == j.parent || j.parent.spouse.sibling == i.parent))) {
                             if(r.equals("cousins")) {
                                 return "true";
                             }
