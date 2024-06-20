@@ -25,7 +25,7 @@ public class Main {
             if (i.name.equals(p1)) {
                 for (Person j : people) {
                     if (j.name.equals(p2)) {
-                        if (i.parent == j || j.parent == i) {
+                        if (i.parent == j || j.parent == i || (i.parent == j.spouse|| j.parent == i.spouse)) {
                             if(r.equals("parent")) {
                                 return "true";
                             }

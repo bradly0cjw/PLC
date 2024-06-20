@@ -103,9 +103,10 @@ PROCEDURE DIVISION.
                            add CR-PaymentAmount-Output to TotalReceived
                            Move 0 to CR-Short
                            IF CR-FeesAmount-Output > CR-PaymentAmount-Output
-                               DISPLAY "Student " CR-StudentName-Output " did not pay the required fees."
+     *>                         DISPLAY "Student " CR-StudentName-Output " did not pay the required fees."
                                COMPUTE CR-Short = CR-PaymentAmount-Output - CR-FeesAmount-Output
-                               display  "Amount short: " CR-Short
+      *>                        display  "Amount short: " CR-Short
+                                display CR-StudentName-Output CR-short
                            END-IF
       *>                      display CR-StudentID-Output "@" CR-StudentName-Output "@" CR-PaymentType-Output "@" CR-FeesAmount-Output "@" CR-PaymentAmount-Output "@" CR-Short
       *>                     DISplay "\n"
